@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 
-class AddTransaction extends StatelessWidget {
-  final titleChange = TextEditingController();
-  final amountChange = TextEditingController();
+class AddTransaction extends StatefulWidget {
   final Function _addTx;
   AddTransaction(this._addTx);
+
+  @override
+  _AddTransactionState createState() => _AddTransactionState();
+}
+
+class _AddTransactionState extends State<AddTransaction> {
+  final titleChange = TextEditingController();
+
+  final amountChange = TextEditingController();
+
+  void _submitData() {
+    final titleTx = titleChange.text;
+    final amountTx = double.parse(amountChange.text);
+    if (titleTx.isEmpty || amountTx <= 0) {
+      return;
+    }
+    widget._addTx(
+      titleTx,
+      amountTx,
+    );
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 10,
+        vertical: 30,
+        horizontal: 30,
       ),
       decoration: BoxDecoration(
         boxShadow: [
@@ -23,23 +44,47 @@ class AddTransaction extends StatelessWidget {
       child: Card(
         elevation: 8,
         child: Container(
-          color: Colors.grey[320],
+          padding: EdgeInsets.only(
+            top: 40,
+            left: 30,
+            bottom: 0,
+            right: 30,
+          ),
+          color: Theme.of(context).primaryColorDark,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Title',
+              Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 20,
                 ),
-                controller: titleChange,
-                //onChanged: (val) => titleChange = val,
+                color: Theme.of(context).primaryColorLight,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                  ),
+                  controller: titleChange,
+                  onSubmitted: (_) => _submitData,
+
+                  //onChanged: (val) => titleChange = val,
+                ),
               ),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Amount',
+              Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 20,
                 ),
-                controller: amountChange,
-                // onChanged: (val) => amountChange = val,
+                color: Theme.of(context).primaryColorLight,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                  ),
+                  controller: amountChange,
+                  onSubmitted: (_) => _submitData,
+                  keyboardType: TextInputType.phone,
+                  // onChanged: (val) => amountChange = val,
+                ),
               ),
               FlatButton(
                 child: Text(
@@ -47,14 +92,11 @@ class AddTransaction extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: Theme.of(context).primaryColorLight,
                   ),
                 ),
                 onPressed: () {
-                  _addTx(
-                    titleChange.text,
-                    double.parse(amountChange.text),
-                  );
+                  _submitData();
                   print(titleChange.text);
                   print(amountChange.text);
                 },
