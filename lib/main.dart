@@ -4,6 +4,7 @@ import './widgets/addTransactions.dart';
 import './widgets/transactionList.dart';
 import 'package:flutter/material.dart';
 import './models/transaction.dart';
+import './widgets/chart.dart';
 
 class MyExpenses extends StatelessWidget {
   @override
@@ -42,9 +43,16 @@ class MyHomepage extends StatefulWidget {
 }
 
 class _MyHomepageState extends State<MyHomepage> {
-  final List<Transaction> _transaction = [
-    
-  ];
+  final List<Transaction> _transaction = [];
+  List<Transaction> get _recentTx {
+    return _transaction.where((tx) {
+      return tx.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
 
   void _addTransaction(String textTx, double amountTx) {
     final newTx = Transaction(
@@ -83,7 +91,12 @@ class _MyHomepageState extends State<MyHomepage> {
           ),
         ],
       ),
-      body: TransactionList(_transaction),
+      body: Column(
+        children: <Widget>[
+          Chart(_recentTx),
+          TransactionList(_transaction),
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
